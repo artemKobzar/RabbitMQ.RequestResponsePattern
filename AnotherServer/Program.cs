@@ -27,15 +27,26 @@ namespace AnotherServer
                 var body = eventArgs.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
                 Order order = JsonSerializer.Deserialize<Order>(message);
-                //orders.Add(order);
+                orders.Add(order);
                 Console.WriteLine($"Recived request: {eventArgs.BasicProperties.CorrelationId}");
-
+                if (orders.Any<Order>())
+                {
+                    Console.WriteLine($"Response for request {eventArgs.BasicProperties.CorrelationId}:");
+                    foreach (var item in orders)
+                    {
+                        Thread.Sleep(3000);
+                        Console.WriteLine($"order Id: {item.Id}, order Name: {item.Name} was added");
+                    }
+                }
+                else
+                    Console.WriteLine("List of orders is empty");
                 channel.BasicAck(eventArgs.DeliveryTag, multiple: false);
                 channel.BasicPublish("", eventArgs.BasicProperties.ReplyTo, null, body);
             };
             channel.BasicConsume(queue: "request-queue", autoAck: false, consumer: consumer);
-
-            Console.ReadKey();
+            Console.WriteLine("Another Server is running...");
+            Console.ReadLine();
+            //Console.ReadKey();
         }
     }
 }

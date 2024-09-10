@@ -59,10 +59,9 @@ namespace AnotherClientConsole
 
                 channel.BasicPublish("", "request-queue", properties, body);
 
-                Console.WriteLine("Client has been started");
                 Console.WriteLine($"Sending request: {properties.CorrelationId}");
             }
-
+            Console.WriteLine("Another Client has been started");
             Console.ReadKey();
         }
     }
